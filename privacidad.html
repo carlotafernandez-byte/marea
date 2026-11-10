@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Privacidad · Marea</title>
+  <meta name="description" content="Política de privacidad de Marea: tus datos se quedan cifrados en tu móvil." />
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+  <style>
+    :root { --bg: #eef3fa; --card: #fff; --ink: #0b1b36; --muted: #5d6b85; --line: #dce4f0; --brand: #2051e5; color-scheme: light; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #060e1e; --card: #0e1a31; --ink: #eaf0fb; --muted: #93a1bc; --line: #1e2c47; --brand: #6e8dff; color-scheme: dark; } }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.6 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 720px; margin: 0 auto; padding: 32px 16px 64px; }
+    h1 { font-family: "New York", ui-serif, Georgia, serif; font-size: 34px; margin: 0 0 4px; }
+    h2 { font-size: 19px; margin: 28px 0 8px; }
+    .muted { color: var(--muted); }
+    .box { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px; margin: 18px 0; }
+    a { color: var(--brand); }
+    li { margin: 4px 0; }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Política de privacidad</h1>
+  <p class="muted">Marea · última actualización: 10 de noviembre de 2026</p>
+
+  <div class="box">
+    <b>En resumen:</b> lo que apuntas en Marea se guarda <b>solo en tu móvil</b>, <b>cifrado con tu contraseña</b>. No tenemos servidores que reciban tus datos, no usamos analítica ni publicidad y no compartimos nada con nadie.
+  </div>
+
+  <h2>1. Qué datos trata la app</h2>
+  <p>Marea guarda en tu dispositivo la información que tú introduces: tu nombre y email (para tu cuenta local), las fechas de tu regla, síntomas, estado de ánimo, flujo, relaciones sexuales, tests de embarazo y de ovulación, temperatura basal, notas, tu método anticonceptivo y tus preferencias. Son datos de salud, que el Reglamento General de Protección de Datos (RGPD) considera especialmente protegidos.</p>
+
+  <h2>2. Dónde se guardan</h2>
+  <p>Todo se almacena únicamente en el almacenamiento interno de tu dispositivo, cifrado con AES-256-GCM. La clave se obtiene de tu contraseña (PBKDF2 con 210.000 iteraciones) y nunca sale del móvil. Ni nosotros ni nadie podemos leer tus datos. Tu cuenta también es local: no se envía a ningún servidor.</p>
+
+  <h2>3. Qué no hacemos</h2>
+  <ul>
+    <li>No enviamos tus datos a ningún servidor propio ni de terceros.</li>
+    <li>No usamos herramientas de analítica, publicidad ni rastreo.</li>
+    <li>No vendemos ni compartimos datos con nadie, tampoco con fines publicitarios.</li>
+    <li>El asistente «Pregunta» funciona dentro del móvil: tus preguntas no salen de él.</li>
+  </ul>
+
+  <h2>4. Notificaciones</h2>
+  <p>Si activas los recordatorios, se programan en tu propio móvil como notificaciones locales. No usamos servicios de notificaciones push. En el modo discreto, los avisos muestran un texto neutro.</p>
+
+  <h2>5. Enlaces externos</h2>
+  <p>La app incluye enlaces a webs y servicios de terceros (por ejemplo, playlists de Spotify o informes de la OCU). Solo se abren si tú los tocas, y a partir de ese momento se aplican las políticas de privacidad de esos servicios.</p>
+
+  <h2>6. Copias de seguridad</h2>
+  <p>Puedes descargar una copia de tus datos. Esa copia se guarda <b>sin cifrar</b> para que puedas restaurarla, así que guárdala en un lugar seguro. Tú decides dónde se guarda; nosotros no la recibimos.</p>
+
+  <h2>7. Tus derechos y cómo borrar tus datos</h2>
+  <p>Como los datos solo están en tu dispositivo, tienes control total sobre ellos: puedes consultarlos, corregirlos y exportarlos desde la app, y borrarlos por completo en <i>Tu cuenta › Borrar mi cuenta y mis datos</i>. Desinstalar la app también los elimina. Si olvidas la contraseña, no se pueden recuperar.</p>
+
+  <h2>8. Menores</h2>
+  <p>Marea no recoge datos de nadie, por lo que no trata datos de menores. Recomendamos su uso a partir de los 13 años.</p>
+
+  <h2>9. Información médica</h2>
+  <p>El contenido de Marea es informativo y no sustituye a una consulta médica. Las predicciones del ciclo son estimaciones y no son un método anticonceptivo.</p>
+
+  <h2>10. Contacto</h2>
+  <p>Para cualquier duda sobre privacidad, escríbenos a través de <a href="https://github.com/carlotafernandez-byte/marea/issues">la página del proyecto</a>.</p>
+
+  <p><a href="./">← Volver a Marea</a></p>
+</main>
+</body>
+</html>

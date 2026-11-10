@@ -4,6 +4,20 @@
   "type": "module",
   "scripts": {
     "test": "node --test tests/",
-    "start": "python3 -m http.server 5173"
+    "start": "python3 -m http.server 5173",
+    "build:www": "node scripts/build-www.mjs",
+    "android": "npm run build:www && npx cap sync android",
+    "ios": "npm run build:www && npx cap sync ios"
+  },
+  "dependencies": {
+    "@capacitor/android": "8.6.0",
+    "@capacitor/core": "8.6.0",
+    "@capacitor/ios": "8.6.0",
+    "@capacitor/local-notifications": "8.3.1"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "4.0.0",
+    "@capacitor/cli": "8.6.0",
+    "esbuild": "0.28.2"
   }
 }

@@ -1,0 +1,10 @@
+{
+  "appId": "io.github.carlotafernandezbyte.marea",
+  "appName": "Marea",
+  "webDir": "www",
+  "android": { "backgroundColor": "#eef3fa" },
+  "ios": { "backgroundColor": "#eef3fa", "contentInset": "always" },
+  "plugins": {
+    "LocalNotifications": { "smallIcon": "ic_stat_marea", "iconColor": "#2051E5" }
+  }
+}

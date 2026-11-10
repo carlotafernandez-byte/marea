@@ -1,7 +1,7 @@
 // Funciona sin conexión: guarda la app en caché. Tus datos nunca pasan por aquí (están en localStorage).
-const CACHE = 'marea-v5';
+const CACHE = 'marea-v6';
 const FILES = [
-  './', 'index.html', 'css/styles.css', 'js/app.js', 'js/cycle.js', 'js/content.js', 'js/store.js', 'js/assistant.js', 'js/contraception.js',
+  './', 'index.html', 'css/styles.css', 'js/app.js', 'js/cycle.js', 'js/content.js', 'js/store.js', 'js/assistant.js', 'js/contraception.js', 'js/notifications.js', 'privacidad.html',
   'manifest.webmanifest', 'manifest-discreto.webmanifest', 'icons/discreto.svg', 'icons/discreto-192.png', 'icons/discreto-512.png', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',
 ];
 

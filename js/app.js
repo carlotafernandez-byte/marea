@@ -5,6 +5,7 @@ import * as store from './store.js';
 import * as C from './content.js';
 import { answer, SUGGESTIONS } from './assistant.js';
 import { contraStatus, METHODS as CONTRA, isHormonal } from './contraception.js';
+import { buildReminders, NOTIFY_DEFAULTS } from './notifications.js';
 
 // ---------- Estado ----------
 let state = store.fresh();
@@ -36,7 +37,19 @@ const fMonth = (ym) => cap(dtf({ month: 'long', year: 'numeric' }).format(fromKe
 const plural = (n, a, b) => `${n} ${n === 1 ? a : b}`;
 const pred = () => predict(state.days, state.settings, today());
 const day = (k) => (state.days[k] ||= {});
-const persist = () => store.save(state);
+const persist = () => { syncReminders(); return store.save(state); };
+
+// ---------- Recordatorios (solo en la app nativa) ----------
+const native = () => window.MareaNative?.isNative === true;
+let syncTimer;
+function syncReminders() {
+  if (!native() || ui.screen !== 'app') return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => {
+    const list = state.settings.remindersOn ? buildReminders({ pred: pred(), settings: state.settings, days: state.days }, new Date(), isDiscreet()) : [];
+    window.MareaNative.schedule(list).catch(() => {});
+  }, 800);
+}
 const firstName = () => (store.getAccount()?.name || '').split(' ')[0];
 
 // ---------- Modo discreto ----------
@@ -469,7 +482,7 @@ function viewAnticonceptivo() {
         <p class="small muted">Míralo en tu informe o pregunta en tu centro de salud: depende del modelo.</p>` : ''}
     </section>
     ${m.hormonal ? `<section class="card"><h3>Ojo con las predicciones</h3><p>Los anticonceptivos hormonales suelen impedir la ovulación, así que el sangrado que tienes no es una regla de verdad (es un sangrado «de privación») y los días fértiles calculados no aplican.</p>${plain('Mientras lo uses bien, Marea te sirve para apuntar y para los avisos, pero no para saber cuándo eres fértil.')}</section>` : ''}
-    <p class="note">Marea te avisa cuando abres la app. Para no olvidarte nunca de la píldora, ponte también una alarma diaria en el móvil.</p>
+    ${native() ? `<p class="note">${state.settings.remindersOn ? 'Tienes los recordatorios activados: te avisaremos en el móvil.' : 'Activa los recordatorios en tu cuenta (icono de arriba a la derecha) y te avisaremos en el móvil.'}</p>` : '<p class="note">En la web, Marea te avisa cuando abres la app. Para no olvidarte nunca de la píldora, ponte también una alarma diaria en el móvil.</p>'}
     ${disclaimer('Sigue siempre el prospecto de tu método: manda sobre cualquier consejo general.')}`;
 }
 
@@ -872,6 +885,12 @@ function sheetSettings() {
       <div class="stepper-row"><span>Duración de la regla</span>${stepper('periodLen', s.periodLen, 'set-default')}</div></div>
     <div class="group"><p class="label">Anticonceptivo</p>
       <button class="btn soft" data-action="goto" data-value="salud:anticonceptivo">${s.contra?.method && s.contra.method !== 'ninguno' ? CONTRA[s.contra.method].name + ' · cambiar' : 'Configurar mi anticonceptivo'}</button></div>
+    <div class="group"><p class="label">Recordatorios</p>
+      ${native() ? `
+        <label class="switch-row"><span><b>Avisarme en el móvil</b><span class="muted small">Regla, días fértiles, píldora y cambios de tu anticonceptivo.</span></span><input type="checkbox" class="switch" ${s.remindersOn ? 'checked' : ''} data-change="reminders"></label>
+        ${s.remindersOn ? `<div class="chips wrap" style="margin-top:10px">${[['period', 'Regla'], ['fertile', 'Días fértiles'], ['pill', 'Píldora'], ['changes', 'Anillo, parche, DIU…']].map(([k, l]) => chip('notify-pref', k, l, { ...NOTIFY_DEFAULTS, ...(s.notify || {}) }[k])).join('')}</div>` : ''}`
+      : '<p class="small muted">Los avisos en el móvil funcionan en la app de Android y iPhone. En la versión web, ponte una alarma para la píldora.</p>'}
+    </div>
     <div class="group"><p class="label">Modo discreto</p>
       <label class="switch-row"><span><b>Ocultar que es una app de salud</b><span class="muted small">El nombre pasa a «Diario» con un icono neutro.</span></span><input type="checkbox" class="switch" ${isDiscreet() ? 'checked' : ''} data-change="discreet"></label></div>
     <div class="group"><p class="label">Privacidad</p>
@@ -882,7 +901,7 @@ function sheetSettings() {
       <button class="btn soft" data-action="export">Descargar copia de seguridad</button>
       <label class="btn soft file">Restaurar una copia<input type="file" accept="application/json" data-change="import" hidden></label>
       <button class="btn danger" data-action="delete-account">Borrar mi cuenta y mis datos</button></div>
-    <p class="small muted center">${brandName()} · gratis para siempre</p>`;
+    <p class="small muted center">${brandName()} · gratis para siempre · <a href="privacidad.html" target="_blank" rel="noopener">Privacidad</a></p>`;
 }
 
 // ---------- Onboarding y login ----------
@@ -1030,6 +1049,7 @@ function enterApp(data) {
   ui.screen = 'app';
   ui.tab = 'hoy';
   render();
+  syncReminders();
 }
 
 function resetToOnboarding() {
@@ -1082,6 +1102,7 @@ const ACTIONS = {
   },
   'month-today'() { ui.month = today().slice(0, 7); render(); },
   'ciclo-tab'(v) { ui.ciclo = v; render(); },
+  'notify-pref'(v) { const n = { ...NOTIFY_DEFAULTS, ...(state.settings.notify || {}) }; n[v] = !n[v]; state.settings.notify = n; persist(); render(); },
   'pill-taken'() { const d = day(today()); d.pill = d.pill ? undefined : true; persist(); render(); if (d.pill) toast('Apuntada 💊'); },
   'pill-day'() { const d = day(ui.sheet.key); d.pill = d.pill ? undefined : true; persist(); render(); },
   'contra-set'(v, el) { state.settings.contra = { ...state.settings.contra, [el.dataset.key]: v }; persist(); render(); },
@@ -1124,6 +1145,7 @@ const ACTIONS = {
     try { await store.changePassword(old, nw, state); toast('Contraseña cambiada'); } catch { toast('La contraseña actual no es correcta'); }
   },
   logout() {
+    window.MareaNative?.cancelAll().catch(() => {});
     store.logout();
     state = store.fresh();
     ui.sheet = null;
@@ -1134,6 +1156,7 @@ const ACTIONS = {
   },
   'delete-account'() {
     if (!confirm('Se borrarán tu cuenta y todo lo que has apuntado en este dispositivo. No se puede deshacer. ¿Seguro?')) return;
+    window.MareaNative?.cancelAll().catch(() => {});
     store.deleteAccount();
     resetToOnboarding();
   },
@@ -1224,9 +1247,23 @@ const CHANGES = {
   },
   'contra-method'(el) { state.settings.contra = { ...(state.settings.contra || {}), method: el.value }; persist(); render(); },
   'contra-start'(el) { state.settings.contra = { ...state.settings.contra, start: el.value || undefined }; persist(); render(); },
+  async reminders(el) {
+    if (el.checked) {
+      const perm = await window.MareaNative.requestPermission();
+      if (perm !== 'granted') {
+        el.checked = false;
+        return toast('Sin permiso no podemos avisarte. Actívalo en Ajustes del móvil › Notificaciones');
+      }
+    }
+    state.settings.remindersOn = el.checked;
+    persist();
+    render();
+    toast(el.checked ? 'Recordatorios activados 🔔' : 'Recordatorios desactivados');
+  },
   discreet(el) {
     try { el.checked ? localStorage.setItem(DISCREET_KEY, '1') : localStorage.removeItem(DISCREET_KEY); } catch {}
     applyDiscreet();
+    syncReminders();
     render();
     toast(el.checked ? 'Modo discreto activado. Si ya la tenías instalada, bórrala y vuelve a añadirla para cambiar el icono' : 'Modo discreto desactivado');
   },
@@ -1272,7 +1309,8 @@ document.addEventListener('submit', (e) => {
 document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && ui.sheet) ACTIONS['close-sheet'](); });
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && ui.screen === 'app') render(); });
 
-if ('serviceWorker' in navigator && location.protocol !== 'file:') navigator.serviceWorker.register('./sw.js').catch(() => {});
+// En la app nativa los archivos ya van dentro: no hace falta el service worker.
+if ('serviceWorker' in navigator && location.protocol !== 'file:' && !native()) navigator.serviceWorker.register('./sw.js').catch(() => {});
 
 // ---------- Arranque ----------
 (async () => {
