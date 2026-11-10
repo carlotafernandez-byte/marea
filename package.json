@@ -7,7 +7,8 @@
     "start": "python3 -m http.server 5173",
     "build:www": "node scripts/build-www.mjs",
     "android": "npm run build:www && npx cap sync android",
-    "ios": "npm run build:www && npx cap sync ios"
+    "ios": "npm run build:www && npx cap sync ios",
+    "android:build": "npm run android && cd android && JAVA_HOME=/opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk/Contents/Home ./gradlew bundleRelease assembleDebug"
   },
   "dependencies": {
     "@capacitor/android": "8.6.0",

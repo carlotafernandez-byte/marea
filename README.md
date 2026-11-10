@@ -29,3 +29,13 @@ npm test    # tests de la lógica del ciclo y del asistente
 Para publicarla gratis basta con subir la carpeta a un hosting estático con HTTPS (GitHub Pages, Netlify, Cloudflare Pages).
 
 > El contenido de salud es información general y no sustituye a una consulta médica. Las predicciones por calendario no son un método anticonceptivo.
+
+## App de Android
+```sh
+npm run android:build
+```
+- Archivo para Google Play: `android/app/build/outputs/bundle/release/app-release.aab`
+- APK para probar en un móvil: `android/app/build/outputs/apk/debug/app-debug.apk`
+- La clave de firma está en `~/marea-firma/` (fuera del repositorio). **Haz copia de seguridad**: sin ella no se pueden publicar actualizaciones con la misma clave de subida.
+- Antes de cada versión nueva, sube `versionCode` en `android/app/build.gradle`.
+- La ficha de la tienda y sus imágenes están en `tiendas/`.
